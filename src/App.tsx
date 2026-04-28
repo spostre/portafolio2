@@ -139,7 +139,7 @@ export default function App() {
               className="relative w-64 h-64 md:w-80 md:h-80"
             >
               <img
-                src="images/33b680c6-04c1-4867-b11d-72b2c3440b62.jpg"
+                src="/images/33b680c6-04c1-4867-b11d-72b2c3440b62.jpg"
                 alt="Mi Foto"
                 className="relative w-full h-full object-cover rounded-[3rem] border-8 border-white candy-shadow"
                 referrerPolicy="no-referrer"

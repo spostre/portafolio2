@@ -3,10 +3,10 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Heart, Play, Maximize2, X, ChevronRight, Eye, EyeOff } from 'lucide-react';
 
 const photos = [
-  { id: 1, url: 'images/WhatsApp Image 2026-04-28 at 3.01.26 PM.jpeg', title: 'Momentos 1' },
-  { id: 2, url: 'images/WhatsApp Image 2026-04-28 at 3.01.28 PM.jpeg', title: 'Momentos 2' },
-  { id: 3, url: 'images/WhatsApp Image 2026-04-28 at 3.01.29 PM(1).jpeg', title: 'Momentos 3' },
-  { id: 4, url: 'images/WhatsApp Image 2026-04-28 at 3.01.29 PM.jpeg', title: 'Momentos 4' },
+  { id: 1, url: '/images/WhatsApp Image 2026-04-28 at 3.01.26 PM.jpeg', title: 'Momentos 1' },
+  { id: 2, url: '/images/WhatsApp Image 2026-04-28 at 3.01.28 PM.jpeg', title: 'Momentos 2' },
+  { id: 3, url: '/images/WhatsApp Image 2026-04-28 at 3.01.29 PM(1).jpeg', title: 'Momentos 3' },
+  { id: 4, url: '/images/WhatsApp Image 2026-04-28 at 3.01.29 PM.jpeg', title: 'Momentos 4' },
 ];
 
 export default function Album() {
@@ -99,7 +99,7 @@ export default function Album() {
                   muted
                   loop
                 >
-                  <source src="video/WhatsApp Video 2026-04-28 at 2.18.33 PM.mp4" type="video/mp4" />
+                  <source src="/video/WhatsApp Video 2026-04-28 at 2.18.33 PM.mp4" type="video/mp4" />
                   Tu navegador no soporta el elemento de video.
                 </video>
               </div>
