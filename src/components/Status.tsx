@@ -1,60 +1,56 @@
-import { Circle, MapPin, Calendar, Sparkles } from 'lucide-react';
+import { MapPin, Calendar } from 'lucide-react';
 
 /**
  * CONFIGURACIÓN DE TU ESTADO
  * Cambia los valores de abajo para actualizar tu estado en la web.
  */
-const MY_STATUS = 'busy'; // Opciones: 'available' (Verde) | 'busy' (Rojo)
+const MY_STATUS = 'busy' as 'available' | 'busy'; //Opciones: 'available' (Verde) | 'busy' (Rojo)
 const MY_MESSAGE = 'Hola, estoy mejorando mis habilidades y pronto estare listo para la accion';
 const MY_LOCATION = 'Floridablanca, Colombia';
 const MY_ACTIVITY = 'Estudiando';
 
 export default function Status() {
-  const isAvailable = MY_STATUS === 'busy';
+  const isAvailable = MY_STATUS === 'available';
 
   return (
-    <div className="glass p-8 rounded-[3rem] candy-shadow w-full border-4 border-white bg-white/40">
-      <div className="flex items-center justify-between mb-8">
-        <h3 className="text-2xl font-black text-gray-700 tracking-tight flex items-center gap-2">
-          Mi Estado <Sparkles className="text-candy-yellow" size={20} />
-        </h3>
-        <div className={`px-4 py-1.5 rounded-full flex items-center gap-2 border-2 ${isAvailable ? 'bg-green-50 border-green-200 text-green-600' : 'bg-red-50 border-red-200 text-red-600'}`}>
-          <Circle size={12} className={`fill-current ${isAvailable ? 'animate-pulse' : ''}`} />
-          <span className="text-xs font-black uppercase tracking-widest">
-            {isAvailable ? 'Disponible' : 'Ocupado'}
+    <div className="card overflow-hidden">
+      <div className="flex items-center justify-between gap-4 px-6 py-5 border-b border-[#e3e6eb]">
+        <h3 className="text-xl">Mi Estado</h3>
+        <div
+          className={`px-3 py-1 rounded-[3px] flex items-center gap-2 border text-xs font-semibold uppercase tracking-[0.12em] ${
+            isAvailable ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'
+          }`}
+        >
+          <span className="relative flex w-2 h-2">
+            {isAvailable && <span className="absolute inset-0 rounded-full bg-green-500 opacity-60 motion-safe:animate-ping" />}
+            <span className={`relative w-2 h-2 rounded-full ${isAvailable ? 'bg-green-500' : 'bg-red-500'}`} />
           </span>
+          {isAvailable ? 'Disponible' : 'Ocupado'}
         </div>
       </div>
 
-      <div className="space-y-6">
-        {/* Mensaje Principal */}
-        <div className="bg-white/80 p-6 rounded-[2rem] border-2 border-white candy-shadow shadow-inner">
-          <p className="text-gray-600 italic text-lg leading-relaxed">
-            "{MY_MESSAGE}"
-          </p>
-        </div>
+      <div className="p-6 space-y-5">
+        {/* Mensaje principal */}
+        <blockquote className="border-l-2 border-blue-600 pl-5 py-1">
+          <p className="accent !text-ink-900 text-xl leading-snug">"{MY_MESSAGE}"</p>
+        </blockquote>
 
-        {/* Detalles Adicionales */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="flex items-center gap-3 bg-white/50 p-4 rounded-2xl border border-white/50">
-            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-candy-blue shadow-sm">
-              <MapPin size={20} />
+        {/* Detalles adicionales */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {[
+            { Icon: MapPin, label: 'Ubicación', value: MY_LOCATION },
+            { Icon: Calendar, label: 'Actividad', value: MY_ACTIVITY },
+          ].map(({ Icon, label, value }) => (
+            <div key={label} className="flex items-center gap-3 bg-paper p-4 rounded-[3px]">
+              <div className="w-10 h-10 rounded-[3px] bg-blue-100 text-blue-700 grid place-items-center shrink-0">
+                <Icon size={18} />
+              </div>
+              <div>
+                <p className="eyebrow !text-[0.65rem] text-gray-600">{label}</p>
+                <p className="text-sm font-semibold">{value}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Ubicación</p>
-              <p className="text-sm font-bold text-gray-700">{MY_LOCATION}</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 bg-white/50 p-4 rounded-2xl border border-white/50">
-            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-candy-purple shadow-sm">
-              <Calendar size={20} />
-            </div>
-            <div>
-              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Actividad</p>
-              <p className="text-sm font-bold text-gray-700">{MY_ACTIVITY}</p>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>

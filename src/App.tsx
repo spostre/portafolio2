@@ -3,33 +3,34 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect, useRef } from 'react';
-import { motion, useScroll, useSpring, useInView } from 'motion/react';
+import type { CSSProperties } from 'react';
+import { motion, MotionConfig, useScroll, useSpring } from 'motion/react';
 import {
-  Sparkles,
-  Code2,
-  User,
-  Rocket,
-  TrendingUp,
-  Camera,
+  ArrowUpRight,
+  Clock,
   Github,
+  Heart,
   Linkedin,
   MessageCircle,
-  Palette,
-  Moon,
-  Sun,
-  Clock,
-  Heart,
-  Users
+  Rocket,
+  TrendingUp,
+  Users,
 } from 'lucide-react';
 
 import Header from './components/Header';
-import Section from './components/Section';
-import MouseTrail from './components/MouseTrail';
+import Hero from './components/Hero';
+import Section, { Accent, Reveal } from './components/Section';
+import Starfield from './components/Starfield';
 import Status from './components/Status';
 import Album from './components/Album';
 import ContactForm from './components/ContactForm';
-import ClickSparkles from './components/ClickSparkles';
+import { goals, improving, journey, pad, projects, techs } from './data';
+
+const socials = [
+  { icon: <Github size={20} />, label: 'GitHub', href: 'https://github.com/spostre' },
+  { icon: <Linkedin size={20} />, label: 'LinkedIn', href: 'https://www.linkedin.com/in/spostre' },
+  { icon: <MessageCircle size={20} />, label: 'WhatsApp', href: 'https://wa.me/573167168440' },
+];
 
 export default function App() {
   const { scrollYProgress } = useScroll();
@@ -39,374 +40,227 @@ export default function App() {
     restDelta: 0.001
   });
 
-  const themes = {
-    pastel: {
-      hero: 'bg-gradient-to-br from-candy-pink via-white to-candy-blue',
-      skills: 'bg-gradient-to-tr from-candy-blue via-white to-candy-green',
-      journey: 'bg-gradient-to-br from-candy-green via-white to-candy-purple',
-      exp: 'bg-gradient-to-tr from-candy-purple via-white to-candy-yellow',
-      growth: 'bg-gradient-to-br from-candy-yellow via-white to-candy-pink',
-      album: 'bg-gradient-to-tr from-candy-pink via-white to-candy-blue',
-      contact: 'bg-gradient-to-br from-candy-blue via-white to-candy-green',
-      footer: 'bg-gray-50',
-    },
-    vibrant: {
-      hero: 'bg-gradient-to-br from-blue-100 via-white to-purple-100',
-      skills: 'bg-gradient-to-tr from-purple-100 via-white to-green-100',
-      journey: 'bg-gradient-to-br from-green-100 via-white to-yellow-100',
-      exp: 'bg-gradient-to-tr from-yellow-100 via-white to-pink-100',
-      growth: 'bg-gradient-to-br from-pink-100 via-white to-blue-100',
-      album: 'bg-gradient-to-tr from-blue-100 via-white to-purple-100',
-      contact: 'bg-gradient-to-br from-purple-100 via-white to-green-100',
-      footer: 'bg-gray-100',
-    },
-    night: {
-      hero: 'bg-gradient-to-br from-indigo-900 via-purple-900 to-black text-white',
-      skills: 'bg-gradient-to-tr from-purple-900 via-emerald-900 to-black text-white',
-      journey: 'bg-gradient-to-br from-emerald-900 via-rose-900 to-black text-white',
-      exp: 'bg-gradient-to-tr from-rose-900 via-indigo-900 to-black text-white',
-      growth: 'bg-gradient-to-br from-indigo-900 via-blue-900 to-black text-white',
-      album: 'bg-gradient-to-tr from-blue-900 via-purple-900 to-black text-white',
-      contact: 'bg-gradient-to-br from-purple-900 via-emerald-900 to-black text-white',
-      footer: 'bg-black text-white',
-    },
-    sunset: {
-      hero: 'bg-gradient-to-br from-orange-100 via-rose-100 to-amber-100',
-      skills: 'bg-gradient-to-tr from-amber-100 via-orange-100 to-rose-100',
-      journey: 'bg-gradient-to-br from-rose-100 via-amber-100 to-orange-100',
-      exp: 'bg-gradient-to-tr from-orange-100 via-rose-100 to-amber-100',
-      growth: 'bg-gradient-to-br from-amber-100 via-orange-100 to-rose-100',
-      album: 'bg-gradient-to-tr from-rose-100 via-amber-100 to-orange-100',
-      contact: 'bg-gradient-to-br from-orange-100 via-rose-100 to-amber-100',
-      footer: 'bg-orange-50',
-    },
-    mint: {
-      hero: 'bg-gradient-to-br from-teal-100 via-emerald-100 to-cyan-100',
-      skills: 'bg-gradient-to-tr from-cyan-100 via-teal-100 to-emerald-100',
-      journey: 'bg-gradient-to-br from-emerald-100 via-cyan-100 to-teal-100',
-      exp: 'bg-gradient-to-tr from-teal-100 via-emerald-100 to-cyan-100',
-      growth: 'bg-gradient-to-br from-cyan-100 via-teal-100 to-emerald-100',
-      album: 'bg-gradient-to-tr from-emerald-100 via-cyan-100 to-teal-100',
-      contact: 'bg-gradient-to-br from-teal-100 via-emerald-100 to-cyan-100',
-      footer: 'bg-teal-50',
-    }
-  };
-
-  const [theme, setTheme] = useState<keyof typeof themes>('pastel');
-  const currentTheme = themes[theme];
-
-  // Refs for scroll tracking
-  const heroRef = useRef(null);
-  const skillsRef = useRef(null);
-  const journeyRef = useRef(null);
-  const projectsRef = useRef(null);
-  const growthRef = useRef(null);
-  const galleryRef = useRef(null);
-  const contactRef = useRef(null);
-
-  const isHeroInView = useInView(heroRef, { amount: 0.3 });
-  const isSkillsInView = useInView(skillsRef, { amount: 0.3 });
-  const isJourneyInView = useInView(journeyRef, { amount: 0.3 });
-  const isProjectsInView = useInView(projectsRef, { amount: 0.3 });
-  const isGrowthInView = useInView(growthRef, { amount: 0.3 });
-  const isGalleryInView = useInView(galleryRef, { amount: 0.3 });
-  const isContactInView = useInView(contactRef, { amount: 0.3 });
-
-  useEffect(() => {
-    if (isHeroInView) setTheme('pastel');
-    else if (isSkillsInView) setTheme('vibrant');
-    else if (isJourneyInView) setTheme('night');
-    else if (isProjectsInView) setTheme('sunset');
-    else if (isGrowthInView || isGalleryInView || isContactInView) setTheme('mint');
-  }, [isHeroInView, isSkillsInView, isJourneyInView, isProjectsInView, isGrowthInView, isGalleryInView, isContactInView]);
-
   return (
-    <div className={`selection:bg-candy-pink selection:text-white transition-colors duration-1000 ${theme === 'night' ? 'dark' : ''}`}>
-      <MouseTrail />
-      <ClickSparkles />
+    <MotionConfig reducedMotion="user">
       <Header />
 
-      {/* Progress Bar */}
-      <motion.div className="fixed top-0 left-0 right-0 h-2 bg-candy-pink z-[60] origin-left" style={{ scaleX }} />
+      {/* Barra de progreso de lectura */}
+      <motion.div className="fixed top-0 left-0 right-0 h-[2px] bg-blue-300 z-[60] origin-left" style={{ scaleX }} />
 
-      {/* Hero Section */}
-      <div ref={heroRef}>
-        <Section id="hero" bgColor={currentTheme.hero}>
-          <div className="flex flex-col md:flex-row items-center gap-12 text-center md:text-left">
-            <motion.div
-              initial={{ scale: 0.8, rotate: -5 }}
-              animate={{ scale: 1, rotate: 0 }}
-              className="relative w-64 h-64 md:w-80 md:h-80"
-            >
-              <img
-                src="/images/33b680c6-04c1-4867-b11d-72b2c3440b62.jpg"
-                alt="Mi Foto"
-                className="relative w-full h-full object-cover rounded-[3rem] border-8 border-white candy-shadow"
-                referrerPolicy="no-referrer"
-              />
-            </motion.div>
+      <main>
+        <Hero />
 
-            <div className="flex-1">
-              <motion.h1
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="text-5xl md:text-8xl mb-6 leading-tight"
-              >
-                ¡Hola! Soy <span className="rainbow-text">Santiago Centeno</span>
-              </motion.h1>
-              <motion.p
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
-                className="text-xl md:text-2xl text-gray-600 mb-8 max-w-2xl"
-              >
-                Bienvenido a mi portafolio. Soy un desarrollador productivo apasionado por crear experiencias digitales dulces y memorables.
-              </motion.p>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                className="flex flex-wrap gap-4 justify-center md:justify-start"
-              >
-                <a href="#projects" className="bg-candy-pink text-white font-bold py-4 px-8 rounded-full shadow-lg hover:scale-105 transition-transform">
-                  Ver Proyectos
-                </a>
-                <a href="#contact" className="bg-white text-candy-pink font-bold py-4 px-8 rounded-full shadow-lg hover:scale-105 transition-transform border-2 border-candy-pink/10">
-                  Contactar
-                </a>
-              </motion.div>
-            </div>
-          </div>
-        </Section>
-      </div>
-
-      {/* Habilidades (Bento Grid) */}
-      <div ref={skillsRef}>
-        <Section id="skills" title="Mis Habilidades" bgColor={currentTheme.skills}>
-          <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-6 h-auto md:h-[600px]">
-            {/* Main Skill */}
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              className="md:col-span-2 md:row-span-2 glass p-10 rounded-[3rem] flex flex-col justify-center items-center text-center candy-shadow border-4 border-white bg-white/40"
-            >
-              <div className="w-24 h-24 bg-candy-pink rounded-3xl flex items-center justify-center mb-8 text-white shadow-lg">
-                <Clock size={48} />
-              </div>
-              <h3 className="text-4xl font-black mb-6 tracking-tight">Puntualidad</h3>
-              <p className="text-xl text-gray-600 leading-relaxed">
-                Compromiso total con los plazos de entrega, asegurando resultados impecables siempre a tiempo.
-              </p>
-            </motion.div>
-
-            {/* Secondary Skills */}
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              className="md:col-span-2 glass p-8 rounded-[3rem] flex items-center gap-8 candy-shadow border-4 border-white bg-white/40"
-            >
-              <div className="w-16 h-16 bg-candy-blue rounded-2xl flex items-center justify-center text-white shadow-md shrink-0">
-                <Heart size={32} />
-              </div>
-              <div>
-                <h3 className="text-2xl font-bold mb-2">Amabilidad</h3>
-                <p className="text-gray-600">Trato cercano y empático para construir relaciones profesionales sólidas.</p>
-              </div>
-            </motion.div>
-
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              className="glass p-8 rounded-[3rem] flex flex-col justify-center items-center text-center candy-shadow border-4 border-white bg-white/40"
-            >
-              <Rocket className="text-candy-purple mb-4" size={32} />
-              <h3 className="text-xl font-bold">Velocidad</h3>
-            </motion.div>
-
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              className="glass p-8 rounded-[3rem] flex flex-col justify-center items-center text-center candy-shadow border-4 border-white bg-white/40"
-            >
-              <Users className="text-candy-yellow mb-4" size={32} />
-              <h3 className="text-xl font-bold">Trabajo en equipo</h3>
-            </motion.div>
-          </div>
-
-          <div className="mt-16 flex flex-wrap justify-center gap-4">
-            {['JavaScript', 'HTML', 'CSS', 'C#', 'Python', 'MySQL', 'n8n', 'Git', 'Node.js', 'Linux'].map((tech, i) => (
-              <motion.span
-                key={i}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                whileHover={{ y: -5, backgroundColor: '#fff' }}
-                className="bg-white/60 px-6 py-3 rounded-2xl font-bold text-gray-600 candy-shadow border-2 border-white/50 cursor-default"
-              >
-                {tech}
-              </motion.span>
-            ))}
-          </div>
-        </Section>
-      </div>
-
-      {/* Mi Dulce Trayectoria */}
-      <div ref={journeyRef}>
-        <Section id="journey" title="Mi Dulce Trayectoria" bgColor={currentTheme.journey}>
-          <div className="relative space-y-12 before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-1 before:bg-gradient-to-b before:from-transparent before:via-white before:to-transparent">
-            {[
-              { year: '2024', title: 'Estudio autónomo', company: 'Principios de programación', desc: 'Aprendizaje de las bases y lógica fundamental del desarrollo.' },
-              { year: '2025', title: 'Estudio en Campuslands', company: 'Campuslands', desc: 'Formación técnica avanzada y proyectos colaborativos.' },
-              { year: '2026', title: 'Graduación en Campuslands', company: 'Campuslands', desc: 'Finalización del programa de entrenamiento intensivo.' },
-            ].map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: i % 2 === 0 ? -50 : 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group"
-              >
-                <div className="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-candy-pink text-white shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
-                  <Sparkles size={16} />
+        {/* Habilidades */}
+        <Section id="skills" index="01" eyebrow="Habilidades" title="Mis *Habilidades*" tone="light" overlay="lines">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4">
+            <Reveal className="md:col-span-2 md:row-span-2">
+              <article className="group relative h-full overflow-hidden rounded-[2px] bg-blue-700 text-white p-8 md:p-11 flex flex-col min-h-[320px] md:min-h-[440px]">
+                <span className="eyebrow text-white/70">01 · Principal</span>
+                <Clock
+                  className="absolute -right-16 -top-16 w-56 h-56 md:-right-20 md:-top-20 md:w-[340px] md:h-[340px] text-white/20 transition-transform duration-700 group-hover:rotate-12"
+                  size={340}
+                  strokeWidth={0.6}
+                  aria-hidden="true"
+                />
+                <div className="relative mt-auto">
+                  <h3 className="text-4xl md:text-5xl mb-5">Puntualidad</h3>
+                  <p className="text-lg text-white/80 leading-relaxed max-w-md">
+                    Compromiso total con los plazos de entrega, asegurando resultados impecables siempre a tiempo.
+                  </p>
                 </div>
-                <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] glass p-8 rounded-[2.5rem] candy-shadow border-4 border-white bg-white/30">
-                  <div className="flex items-center justify-between space-x-2 mb-2">
-                    <div className="font-black text-candy-pink text-2xl">{item.year}</div>
-                    <time className="font-bold text-gray-500 uppercase tracking-widest text-xs">{item.company}</time>
+              </article>
+            </Reveal>
+
+            <Reveal delay={0.08} className="md:col-span-2">
+              <article className="h-full rounded-[2px] bg-ink-900 text-white p-8 flex flex-col sm:flex-row sm:items-center gap-6">
+                <div className="w-14 h-14 border border-white/15 text-blue-300 rounded-[3px] grid place-items-center shrink-0">
+                  <Heart size={24} />
+                </div>
+                <div>
+                  <span className="eyebrow text-blue-300">02</span>
+                  <h3 className="text-2xl mt-1 mb-2">Amabilidad</h3>
+                  <p className="text-[#b9bfca]">Trato cercano y empático para construir relaciones profesionales sólidas.</p>
+                </div>
+              </article>
+            </Reveal>
+
+            {[
+              { Icon: Rocket, title: 'Velocidad' },
+              { Icon: Users, title: 'Trabajo en equipo' },
+            ].map(({ Icon, title }, i) => (
+              <Reveal key={title} delay={0.16 + i * 0.08}>
+                <article className="group h-full bg-white border border-[rgb(15_18_24/0.18)] rounded-[2px] p-8 flex flex-col justify-between gap-10 min-h-[180px] transition-colors hover:border-blue-600">
+                  <div className="flex items-center justify-between">
+                    <Icon className="text-blue-600 transition-transform duration-300 group-hover:-translate-y-1" size={28} />
+                    <span className="eyebrow text-gray-500">{pad(i + 2)}</span>
                   </div>
-                  <h4 className="text-xl font-bold mb-2">{item.title}</h4>
-                  <p className="text-gray-600">{item.desc}</p>
-                </div>
-              </motion.div>
+                  <h3 className="text-xl">{title}</h3>
+                </article>
+              </Reveal>
             ))}
           </div>
-        </Section>
-      </div>
 
-      {/* Projects */}
-      <div ref={projectsRef}>
-        <Section id="projects" title="Experiencias y Proyectos" bgColor={currentTheme.exp}>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-            {[
-              { title: 'Hotel el Carmen', desc: 'Pagina web realizada en JavaScript para la reserva de habitaciones simulada.', tags: ['JavaScript', 'HTML', 'CSS'], link: 'https://github.com/spostre/Proyecto-Java-Script' },
-              { title: 'Librería de Películas', desc: 'Programa en consola creado desde Python para la gestión de películas favoritas y almacenamiento de datos en JSON.', tags: ['Python', 'JSON'], link: 'https://github.com/spostre/pelicode' },
-              { title: 'Respondedor Automático Telegram', desc: 'Flujo realizado en n8n para crear un contestador automático basado en un menú numérico.', tags: ['n8n', 'Automation'], link: 'https://github.com/spostre/Proyecto-N8N' },
-            ].map((project, i) => (
-              <motion.div
-                key={i}
-                whileHover={{ scale: 1.02 }}
-                className="glass p-10 rounded-[3rem] candy-shadow border-4 border-white overflow-hidden relative"
-              >
-                <div className="absolute top-0 right-0 w-32 h-32 bg-candy-green/20 rounded-bl-full -mr-8 -mt-8" />
-                <h3 className="text-3xl font-bold mb-4">{project.title}</h3>
-                <p className="text-gray-600 mb-6 text-lg">{project.desc}</p>
-                <div className="flex flex-wrap gap-3 mb-8">
-                  {project.tags.map(tag => (
-                    <span key={tag} className="bg-white/50 px-4 py-1 rounded-full text-sm font-bold text-gray-500">
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-                <a 
-                  href={project.link} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-candy-pink text-white font-bold px-6 py-3 rounded-full shadow-md hover:scale-105 hover:shadow-lg transition-all"
+          {/* Tecnologías como tabla de celdas numeradas */}
+          <Reveal delay={0.1} className="mt-14">
+            <p className="eyebrow text-blue-600 mb-4">Tecnologías</p>
+            <ul className="grid grid-cols-2 sm:grid-cols-5 border-t border-l border-[rgb(15_18_24/0.14)] bg-white">
+              {techs.map((tech, i) => (
+                <li
+                  key={i}
+                  className="group flex items-baseline gap-3 px-5 py-4 border-r border-b border-[rgb(15_18_24/0.14)] transition-colors hover:bg-ink-950 hover:text-white"
                 >
-                  Ver Proyecto <Rocket size={18} />
-                </a>
-              </motion.div>
+                  <span className="font-nav text-[0.65rem] font-semibold text-blue-600 group-hover:text-blue-300">{pad(i)}</span>
+                  <span className="font-medium">{tech}</span>
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+        </Section>
+
+        {/* Trayectoria */}
+        <Section id="journey" index="02" eyebrow="Trayectoria" title="Mi *Trayectoria*" tone="dark" stars>
+          <ol className="pf-ladder">
+            {journey.map((item, i) => (
+              <li key={i} style={{ '--h': i } as CSSProperties}>
+                <Reveal delay={i * 0.12} className="flex flex-1 flex-col">
+                  <div className="pf-ladder__step" style={{ '--h': i } as CSSProperties}>
+                    <span className="pf-ladder__year">{item.year}</span>
+                    <div className="pf-ladder__body">
+                      <p className="eyebrow text-blue-300 mb-3">{item.company}</p>
+                      <h3 className="text-2xl mb-3">{item.title}</h3>
+                      <p className="text-[#a3a9b4] leading-relaxed">{item.desc}</p>
+                    </div>
+                  </div>
+                </Reveal>
+              </li>
+            ))}
+          </ol>
+        </Section>
+
+        {/* Proyectos */}
+        <Section id="projects" index="03" eyebrow="Proyectos" title="Experiencias y *Proyectos*" tone="light" overlay="grid">
+          <div className="grid gap-5 md:gap-6">
+            {projects.map((project, i) => (
+              <Reveal key={project.key}>
+                <article id={`proyecto-${project.key}`} className="pf-panel">
+                  <div className="pf-panel__brand">
+                    <span className="pf-panel__label">{pad(i)} · {project.category}</span>
+                    <h3 className="pf-panel__name">{project.title}</h3>
+                    <span className="pf-panel__badge">GitHub</span>
+                    <svg className="pf-panel__symbol" viewBox="0 0 200 200" aria-hidden="true">
+                      {project.symbol}
+                    </svg>
+                  </div>
+
+                  <div className="pf-panel__detail">
+                    <p className="pf-panel__text">{project.desc}</p>
+
+                    <ul className="pf-panel__features">
+                      {project.tags.map((tag, t) => (
+                        <li key={tag}>
+                          <span>{pad(t)}</span>
+                          {tag}
+                        </li>
+                      ))}
+                    </ul>
+
+                    <div className="pf-panel__cta">
+                      <a href={project.link} target="_blank" rel="noopener noreferrer" className="btn btn-primary group">
+                        Ver Proyecto
+                        <ArrowUpRight size={18} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                      </a>
+                    </div>
+                  </div>
+                </article>
+              </Reveal>
             ))}
           </div>
         </Section>
-      </div>
 
-      {/* Growth (Merged) */}
-      <div ref={growthRef}>
-        <Section id="growth" title="Crecimiento y Objetivos" bgColor={currentTheme.growth}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <div className="space-y-6">
-              <h3 className="text-2xl font-bold text-center md:text-left mb-8">Objetivos a Futuro</h3>
-              {[
-                'Trabajar en un cargo que requiera mis habilidades y tener un gran equipo de trabajo.',
-                'Conseguir mas equipamiento que me ayude a expandir mis habilidades tecnicas',
-                'Empezar mi propio proyecto que genere ingresos'
-              ].map((goal, i) => (
-                <motion.div key={i} whileHover={{ x: 10 }} className="flex items-center gap-4 bg-white/40 p-4 rounded-2xl border border-white/50">
-                  <Rocket className="text-candy-purple shrink-0" />
-                  <span className="font-medium">{goal}</span>
-                </motion.div>
-              ))}
-            </div>
-            <div className="space-y-6">
-              <h3 className="text-2xl font-bold text-center md:text-left mb-8">Cosas que estoy mejorando</h3>
-              {[
-                'Estoy mejorando mis habilidades logicas para resolver problemas de manera mas eficiente y robusta',
-                'Estoy practicando mi memorizacion para no olvidar ningun detalle a al hora de escuchar al cliente',
-                'Estoy poniendo a prueba mi concentracion usando metodos de trabajo flexibles que me ayuden a estar enfocado'
-              ].map((item, i) => (
-                <motion.div key={i} whileHover={{ x: 10 }} className="flex items-center gap-4 bg-white/40 p-4 rounded-2xl border border-white/50">
-                  <TrendingUp className="text-candy-orange shrink-0" />
-                  <span className="font-medium">{item}</span>
-                </motion.div>
-              ))}
-            </div>
+        {/* Crecimiento */}
+        <Section id="growth" index="04" eyebrow="Crecimiento" title="Crecimiento y *Objetivos*" tone="blue" overlay="blue">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { heading: 'Objetivos a Futuro', items: goals, Icon: Rocket, dark: true },
+              { heading: 'Cosas que estoy mejorando', items: improving, Icon: TrendingUp, dark: false },
+            ].map(({ heading, items, Icon, dark }, col) => (
+              <Reveal key={heading} delay={col * 0.1} className="h-full">
+                <div className={`h-full rounded-[2px] p-8 md:p-10 ${dark ? 'bg-ink-950' : 'bg-white/[0.08] border border-white/20'}`}>
+                  <div className="flex items-center justify-between mb-8">
+                    <h3 className="text-2xl">{heading}</h3>
+                    <Icon size={22} className={dark ? 'text-blue-300' : 'text-blue-100'} aria-hidden="true" />
+                  </div>
+                  <ol className="border-t border-white/15">
+                    {items.map((item, i) => (
+                      <li key={i} className="flex gap-5 py-5 border-b border-white/15">
+                        <span className={`eyebrow pt-1 shrink-0 ${dark ? 'text-blue-300' : 'text-blue-100'}`} aria-hidden="true">{pad(i)}</span>
+                        <span className="text-[1.05rem] leading-snug">{item}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              </Reveal>
+            ))}
           </div>
         </Section>
-      </div>
 
-      {/* Album */}
-      <div ref={galleryRef}>
-        <Section id="gallery" title="Álbum Dinámico" bgColor={currentTheme.album}>
-          <Album />
+        {/* Álbum */}
+        <Section id="gallery" index="05" eyebrow="Galería" title="Álbum *Dinámico*" tone="dark" stars>
+          <Reveal>
+            <Album />
+          </Reveal>
         </Section>
-      </div>
 
-      {/* Contact & Status (Merged) */}
-      <div ref={contactRef}>
-        <Section id="contact" title="Contacto y Estado" bgColor={currentTheme.contact}>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start w-full">
-            <div className="w-full">
-              <h3 className="text-2xl font-bold text-gray-700 mb-8 text-center lg:text-left">Mi Estado Actual</h3>
+        {/* Contacto y estado */}
+        <Section id="contact" index="06" eyebrow="Contacto" title="Contacto y *Estado*" tone="light" overlay="lines">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            <Reveal>
+              <h3 className="text-2xl mb-6">Mi Estado Actual</h3>
               <Status />
-            </div>
-            <div className="w-full">
-              <h3 className="text-2xl font-bold text-gray-700 mb-8 text-center lg:text-left">Envíame un Mensaje Dulce</h3>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <h3 className="text-2xl mb-6">Envíame un Mensaje</h3>
               <ContactForm />
-            </div>
+            </Reveal>
           </div>
         </Section>
-      </div>
+      </main>
 
-      {/* Footer */}
-      <footer className={`py-20 px-6 transition-colors duration-1000 ${currentTheme.footer}`}>
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
+      {/* Pie de página */}
+      <footer className="surface-dark has-stars bg-ink-950 text-white py-20 border-t border-white/5">
+        <Starfield origin="bottom" density={0.6} />
+        <div className="container-x flex flex-col md:flex-row justify-between md:items-end gap-12">
           <div className="text-center md:text-left">
-            <h2 className="text-4xl rainbow-text mb-4">¡Sigamos en contacto!</h2>
-            <p className="text-gray-500 max-w-md">
+            <h2 className="text-[clamp(2.2rem,5vw,3.4rem)] mb-5">
+              <Accent text="¡Sigamos en *contacto*!" />
+            </h2>
+            <p className="text-[#a3a9b4] max-w-md mx-auto md:mx-0 leading-relaxed">
               Espero que hayas disfrutado este viaje a traves de mi portafolio. No dudes en escribirme para cualquier colaboración o simplemente para saludar.
             </p>
           </div>
 
           <div className="flex flex-col items-center md:items-end gap-6">
-            <div className="flex gap-4">
-              {[
-                { icon: <Github />, href: 'https://github.com/spostre' },
-                { icon: <Linkedin />, href: 'https://www.linkedin.com/in/spostre' },
-                { icon: <MessageCircle />, href: 'https://wa.me/573167168440' },
-              ].map((social, i) => (
-                <motion.a
-                  key={i}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ y: -5, scale: 1.1 }}
-                  className="w-12 h-12 glass rounded-full flex items-center justify-center text-gray-600 hover:text-candy-pink transition-colors"
-                >
-                  {social.icon}
-                </motion.a>
+            <ul className="flex gap-3">
+              {socials.map((social) => (
+                <li key={social.label}>
+                  <a
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={social.label}
+                    className="w-12 h-12 rounded-[3px] border border-white/15 grid place-items-center text-[#cfd3da] hover:text-white hover:border-white hover:bg-white/5 transition-colors"
+                  >
+                    {social.icon}
+                  </a>
+                </li>
               ))}
-            </div>
-            <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">
-              © 2026 Candy World Portfolio
+            </ul>
+            <p className="eyebrow text-gray-500">
+              © 2026 Santiago Centeno
             </p>
           </div>
         </div>
       </footer>
-    </div>
+    </MotionConfig>
   );
 }

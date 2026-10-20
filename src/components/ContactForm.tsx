@@ -9,7 +9,7 @@ export default function ContactForm() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setStatus('sending');
-    
+
     try {
       const response = await fetch('https://formspree.io/f/jovennegociante@gmail.com', {
         method: 'POST',
@@ -34,20 +34,21 @@ export default function ContactForm() {
   };
 
   return (
-    <div className="glass p-8 md:p-12 rounded-[3rem] candy-shadow w-full border-4 border-white">
+    <div className="card p-6 md:p-8">
       <AnimatePresence mode="wait">
         {status === 'success' ? (
           <motion.div
             key="success"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
             className="text-center py-12"
+            role="status"
           >
-            <div className="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle2 size={48} />
+            <div className="w-16 h-16 bg-blue-100 text-blue-700 rounded-[3px] grid place-items-center mx-auto mb-6">
+              <CheckCircle2 size={36} />
             </div>
-            <h3 className="text-3xl font-bold text-gray-800 mb-2">¡Mensaje Enviado!</h3>
+            <h3 className="text-3xl mb-2">¡Mensaje Enviado!</h3>
             <p className="text-gray-600">Gracias por contactarme. Te responderé lo más pronto posible.</p>
           </motion.div>
         ) : (
@@ -57,50 +58,55 @@ export default function ContactForm() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onSubmit={handleSubmit}
-            className="flex flex-col gap-6"
+            className="flex flex-col gap-5"
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div className="flex flex-col gap-2">
-                <label className="text-sm font-bold text-gray-500 uppercase px-2">Nombre</label>
-                <input 
+                <label htmlFor="cf-name" className="eyebrow !text-[0.7rem] text-gray-600">Nombre</label>
+                <input
+                  id="cf-name"
                   required
-                  type="text" 
+                  type="text"
+                  autoComplete="name"
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="bg-white/80 border-none rounded-2xl px-6 py-4 focus:ring-4 focus:ring-candy-pink/30 outline-none transition-all"
+                  className="field"
                   placeholder="Tu nombre"
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-sm font-bold text-gray-500 uppercase px-2">Email</label>
-                <input 
+                <label htmlFor="cf-email" className="eyebrow !text-[0.7rem] text-gray-600">Email</label>
+                <input
+                  id="cf-email"
                   required
-                  type="email" 
+                  type="email"
+                  autoComplete="email"
                   value={formData.email}
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  className="bg-white/80 border-none rounded-2xl px-6 py-4 focus:ring-4 focus:ring-candy-pink/30 outline-none transition-all"
+                  className="field"
                   placeholder="tu@email.com"
                 />
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-bold text-gray-500 uppercase px-2">Mensaje</label>
-              <textarea 
+              <label htmlFor="cf-message" className="eyebrow !text-[0.7rem] text-gray-600">Mensaje</label>
+              <textarea
+                id="cf-message"
                 required
-                rows={4}
+                rows={5}
                 value={formData.message}
                 onChange={(e) => setFormData({...formData, message: e.target.value})}
-                className="bg-white/80 border-none rounded-3xl px-6 py-4 focus:ring-4 focus:ring-candy-pink/30 outline-none transition-all resize-none"
-                placeholder="Cuéntame algo dulce..."
+                className="field resize-none"
+                placeholder="Cuéntame sobre tu idea o proyecto..."
               />
             </div>
             <button
               disabled={status === 'sending'}
-              className="bg-candy-pink text-white font-bold py-4 px-8 rounded-full shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+              className="btn btn-primary w-full sm:w-auto sm:self-start disabled:opacity-50"
             >
               {status === 'sending' ? 'Enviando...' : (
                 <>
-                  Enviar Mensaje <Send size={20} />
+                  Enviar Mensaje <Send size={18} />
                 </>
               )}
             </button>

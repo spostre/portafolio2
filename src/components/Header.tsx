@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Heart } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 const navItems = [
   { name: 'Inicio', href: '#hero' },
@@ -14,74 +13,97 @@ const navItems = [
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [active, setActive] = useState('#hero');
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
+    const handleScroll = () => setScrolled(window.scrollY > 24);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  return (
-    <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled ? 'py-3' : 'py-6'}`}>
-      <div className="max-w-7xl mx-auto px-6">
-        <nav className={`glass rounded-full px-6 py-3 flex items-center justify-between candy-shadow ${scrolled ? 'bg-white/70' : 'bg-white/40'}`}>
-          <motion.a 
-            href="#hero"
-            whileHover={{ scale: 1.05 }}
-            className="flex items-center gap-2 text-xl font-bold rainbow-text"
-          >
-            <Heart className="text-candy-pink fill-candy-pink" size={24} />
-            <span>Mi Portafolio</span>
-          </motion.a>
+  // Marca en el menú la sección que ocupa el centro de la pantalla
+  useEffect(() => {
+    const ids = ['hero', 'skills', 'journey', 'projects', 'growth', 'gallery', 'contact'];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const id = entry.target.id === 'growth' ? 'projects' : entry.target.id;
+          setActive(`#${id}`);
+        }
+      },
+      { rootMargin: '-45% 0px -50% 0px' },
+    );
+    ids.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, []);
 
-          {/* Desktop Nav */}
-          <ul className="hidden md:flex items-center gap-8">
+  return (
+    <header
+      className={`fixed top-0 left-0 w-full z-50 border-b transition-colors duration-300 ${
+        scrolled || isOpen ? 'bg-ink-950 border-white/10' : 'bg-transparent border-transparent'
+      }`}
+    >
+      <div className="container-x h-[72px] flex items-center justify-between">
+        <a href="#hero" className="flex items-center gap-3 text-white font-semibold tracking-tight">
+          <span className="text-lg">Mi <span className="accent !text-blue-300 text-xl">Portafolio</span></span>
+        </a>
+
+        <nav aria-label="Principal" className="hidden md:block">
+          <ul className="flex items-center gap-1 font-nav text-[0.85rem]">
             {navItems.map((item) => (
               <li key={item.name}>
-                <a 
+                <a
                   href={item.href}
-                  className="text-sm font-semibold text-gray-600 hover:text-candy-pink transition-colors"
+                  aria-current={active === item.href ? 'true' : undefined}
+                  className={`relative px-3 py-2 transition-colors ${
+                    active === item.href ? 'text-white' : 'text-white/70 hover:text-white'
+                  }`}
+                >
+                  {item.name}
+                  <span
+                    className={`absolute left-3 right-3 -bottom-0.5 h-px bg-blue-300 origin-left transition-transform duration-300 ${
+                      active === item.href ? 'scale-x-100' : 'scale-x-0'
+                    }`}
+                  />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <button
+          className="md:hidden p-2 -mr-2 text-white"
+          onClick={() => setIsOpen(!isOpen)}
+          aria-expanded={isOpen}
+          aria-controls="mobile-menu"
+          aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú'}
+        >
+          {isOpen ? <X /> : <Menu />}
+        </button>
+      </div>
+
+      {isOpen && (
+        <nav id="mobile-menu" aria-label="Principal" className="md:hidden border-t border-white/10">
+          <ul className="container-x py-4 flex flex-col font-nav">
+            {navItems.map((item) => (
+              <li key={item.name}>
+                <a
+                  href={item.href}
+                  onClick={() => setIsOpen(false)}
+                  className={`block py-3 border-b border-white/5 ${active === item.href ? 'text-white' : 'text-white/70'}`}
                 >
                   {item.name}
                 </a>
               </li>
             ))}
           </ul>
-
-          {/* Mobile Toggle */}
-          <button 
-            className="md:hidden p-2 text-gray-600"
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            {isOpen ? <X /> : <Menu />}
-          </button>
         </nav>
-      </div>
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="absolute top-full left-0 w-full px-6 pt-2 md:hidden"
-          >
-            <div className="glass rounded-3xl p-6 flex flex-col gap-4 candy-shadow">
-              {navItems.map((item) => (
-                <a 
-                  key={item.name}
-                  href={item.href}
-                  onClick={() => setIsOpen(false)}
-                  className="text-lg font-medium text-gray-700 hover:text-candy-pink"
-                >
-                  {item.name}
-                </a>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      )}
     </header>
   );
 }
