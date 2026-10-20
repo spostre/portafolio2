@@ -1,20 +1,25 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Portafolio — Santiago Centeno
 
-# Run and deploy your AI Studio app
+Portafolio personal donde presento mis habilidades, trayectoria, proyectos y un formulario de contacto.
 
-This contains everything you need to run your app locally.
+## Tecnologías
 
-View your app in AI Studio: https://ai.studio/apps/63ce458d-24da-413d-bed4-49b81cad3e43
+- React 19 + TypeScript
+- Vite
+- Tailwind CSS
+- Motion (animaciones)
+- Desplegado en Netlify
 
-## Run Locally
+## Ejecutar en local
 
-**Prerequisites:**  Node.js
+```bash
+npm install
+npm run dev
+```
 
+La app queda disponible en `http://localhost:3000`.
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Estructura
+
+- `src/data.tsx` — todo el contenido del portafolio (textos, proyectos, metas). Para cambiar un texto, edítalo aquí.
+- `src/components/` — secciones y componentes de la interfaz.
